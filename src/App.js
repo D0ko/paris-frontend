@@ -1,24 +1,82 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Container } from '@mui/material';
+import { useAuth } from './context/AuthContext';
+
+// Components
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Pages
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import HomePage from './pages/HomePage';
+import BetsPage from './pages/BetsPage';
+import CreateBetPage from './pages/CreateBetPage';
+import BetDetailPage from './pages/BetDetailPage';
+import RankingPage from './pages/RankingPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
+  const { isAuthenticated } = useAuth();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Routes>
+          {/* Routes publiques */}
+          <Route 
+            path="/login" 
+            element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />} 
+          />
+          <Route 
+            path="/register" 
+            element={isAuthenticated ? <Navigate to="/" /> : <RegisterPage />} 
+          />
+          
+          {/* Routes protégées */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/bets" element={
+            <ProtectedRoute>
+              <BetsPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/create-bet" element={
+            <ProtectedRoute>
+              <CreateBetPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/bet/:betId" element={
+            <ProtectedRoute>
+              <BetDetailPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/ranking" element={
+            <ProtectedRoute>
+              <RankingPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Redirection par défaut */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Container>
+    </>
   );
 }
 
